@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://nitishchaudharyi.github.io/20kb-Resizer-/sitemap.xml
