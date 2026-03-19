@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Resizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1 id="tool-title">Image Resizer</h1>
+        <a href="index.html" style="color:white">← Back to Home</a>
+    </header>
+
+    <div class="container" style="text-align: center;">
+        <div class="card">
+            <p>Upload an image to compress it under <b id="target-label">...</b> KB</p>
+            <input type="file" id="upload" accept="image/*">
+            <br>
+            <canvas id="canvas" style="display:none;"></canvas>
+            <img id="preview" src="" alt="Preview will appear here">
+            <br>
+            <a id="download" class="btn" style="display:none;">Download Compressed Image</a>
+        </div>
+    </div>
+
+    <script>
+        // Get target size from URL (e.g., resizer.html?size=20)
+        const params = new URLSearchParams(window.location.search);
+        const targetSizeKB = parseInt(params.get('size')) || 20;
+        document.getElementById('tool-title').innerText = targetSizeKB + 'KB Resizer';
+        document.getElementById('target-label').innerText = targetSizeKB;
+
+        const upload = document.getElementById('upload');
+        const canvas = document.getElementById('canvas');
+        const preview = document.getElementById('preview');
+        const downloadBtn = document.getElementById('download');
+
+        upload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    // Recursive compression
+                    let quality = 0.9;
+                    let dataUrl = canvas.toDataURL('image/jpeg', quality);
+                    
+                    // Keep reducing quality until size is met
+                    while (Math.round((dataUrl.length * 3) / 4) / 1024 > targetSizeKB && quality > 0.1) {
+                        quality -= 0.05;
+                        dataUrl = canvas.toDataURL('image/jpeg', quality);
+                    }
+
+                    preview.src = dataUrl;
+                    downloadBtn.href = dataUrl;
+                    downloadBtn.download = `resized-${targetSizeKB}kb.jpg`;
+                    downloadBtn.style.display = 'inline-block';
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+</html>
