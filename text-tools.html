@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Text Transformation Tool</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header><h1>Text Processor</h1><a href="index.html" style="color:white">Back Home</a></header>
+    <div class="container">
+        <div class="card">
+            <textarea id="textInput" style="width:100%; height:200px; padding:10px;" placeholder="Paste text here..."></textarea>
+            <div style="margin-top:20px;">
+                <button class="btn" onclick="process('upper')">UPPERCASE</button>
+                <button class="btn" onclick="process('lower')">lowercase</button>
+                <button class="btn" onclick="process('count')">Count Words</button>
+                <button class="btn" onclick="process('clean')">Remove Spaces</button>
+            </div>
+            <h3 id="outputLabel"></h3>
+        </div>
+    </div>
+
+    <script>
+        function process(type) {
+            let val = document.getElementById('textInput').value;
+            let res = "";
+            if(type === 'upper') res = val.toUpperCase();
+            if(type === 'lower') res = val.toLowerCase();
+            if(type === 'clean') res = val.replace(/\s+/g, ' ').trim();
+            if(type === 'count') {
+                let words = val.trim().split(/\s+/).length;
+                res = "Word Count: " + words;
+            }
+            if(type !== 'count') document.getElementById('textInput').value = res;
+            else alert(res);
+        }
+    </script>
+</body>
+</html>
